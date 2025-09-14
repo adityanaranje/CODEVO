@@ -22,7 +22,7 @@ if github_token:
     st.session_state["GITHUB_TOKEN"] = github_token
 else:
     st.warning("GitHub token required to fetch branches and repo.")
-    st.stop()  # Stop further execution until token is provided
+    st.stop()  # Stop execution until token is provided
 
 # --- Function to validate token ---
 def validate_github_token(token):
@@ -33,7 +33,7 @@ def validate_github_token(token):
 
 if not validate_github_token(st.session_state["GITHUB_TOKEN"]):
     st.error("Invalid GitHub token! Please provide a correct token.")
-    st.stop()  # Stop further execution
+    st.stop()  # Stop execution if token invalid
 
 # --- Sidebar task selection ---
 st.sidebar.title("🔍 Choose Task")
@@ -75,15 +75,12 @@ if task == "Q&A Bot":
         st.title("🤖 Q&A Bot for GitHub Repo")
         repo_url = st.sidebar.text_input("Enter GitHub Repo URL")
 
-        # Use token in headers for all GitHub requests
-        headers = {"Authorization": f"token {st.session_state['GITHUB_TOKEN']}"}
-
         if st.sidebar.button("Get Branches"):
             try:
                 if repo_url:
                     parts = repo_url.strip("/").split("/")
                     owner, repo = parts[-2], parts[-1]
-                    branches = get_github_branches(owner, repo,github_token)
+                    branches = get_github_branches(owner, repo, st.session_state["GITHUB_TOKEN"])
                     if branches:
                         st.session_state["branches"] = branches
                         st.success("✅ Branches fetched successfully!")
@@ -102,7 +99,11 @@ if task == "Q&A Bot":
                             parts = repo_url.strip("/").split("/")
                             owner, repo = parts[-2], parts[-1]
                             repo_text = fetch_github_repo(
-                                owner, repo, st.session_state["selected_branch"], extensions, github_token
+                                owner,
+                                repo,
+                                st.session_state["selected_branch"],
+                                extensions,
+                                st.session_state["GITHUB_TOKEN"]
                             )
                             st.session_state["repo_github_text"] = repo_text
                             st.sidebar.success("Repo loaded successfully!", icon="✅")
@@ -205,5 +206,3 @@ elif task == "Code Generator":
         
         st.session_state["code_history"][-1]["bot"] = response
         st.rerun()
-
-
