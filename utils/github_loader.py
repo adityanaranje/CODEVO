@@ -28,9 +28,13 @@ def get_github_branches(owner, repo):
     url = f"https://api.github.com/repos/{owner}/{repo}/branches"
     headers = {"Accept": "application/vnd.github.v3+json"}
     r = requests.get(url, headers=headers)
-    if r.status_code == 200:
+    try:
+        r = requests.get(url, headers=headers)
+        r.raise_for_status()  # Raise HTTPError if status_code != 200
         return [branch["name"] for branch in r.json()]
-    else:
+    except requests.exceptions.RequestException as e:
+        # Raise original exception with detailed info
         raise Exception(f"Failed to fetch branches: {e}") from e
         #st.error("The link provided is invalid!!!")
+
 
