@@ -17,12 +17,11 @@ github_token = st.sidebar.text_input(
     type="password"
 )
 
-# Store token in session_state for reuse
 if github_token:
     st.session_state["GITHUB_TOKEN"] = github_token
 else:
     st.warning("GitHub token required to fetch branches and repo.")
-    st.stop()  # Stop execution until token is provided
+    st.stop()
 
 # --- Function to validate token ---
 def validate_github_token(token):
@@ -33,37 +32,33 @@ def validate_github_token(token):
 
 if not validate_github_token(st.session_state["GITHUB_TOKEN"]):
     st.error("Invalid GitHub token! Please provide a correct token.")
-    st.stop()  # Stop execution if token invalid
+    st.stop()
 
 # --- Sidebar task selection ---
 st.sidebar.title("🔍 Choose Task")
 task = st.sidebar.radio("Select one:", ["Q&A Bot", "Code Generator"])
 
 # --- Session state setup ---
-if "qa_github_history" not in st.session_state:
-    st.session_state["qa_github_history"] = []
-if "qa_upload_history" not in st.session_state:
-    st.session_state["qa_upload_history"] = []
-if "code_history" not in st.session_state:
-    st.session_state["code_history"] = []
+defaults = {
+    "qa_github_history": [],
+    "qa_upload_history": [],
+    "code_history": [],
+    "repo_github_text": "",
+    "repo_upload_text": "",
+    "branches": [],
+    "selected_branch": "main",
+    "vectorstores": {},
+    "last_repo_url": "",
+    "last_uploaded_files": None,
+}
+for key, val in defaults.items():
+    if key not in st.session_state:
+        st.session_state[key] = val
 
-if "repo_github_text" not in st.session_state:
-    st.session_state["repo_github_text"] = ""
-if "repo_upload_text" not in st.session_state:
-    st.session_state["repo_upload_text"] = ""
-
-if "branches" not in st.session_state:
-    st.session_state["branches"] = []
-if "selected_branch" not in st.session_state:
-    st.session_state["selected_branch"] = "main"
-
-if "vectorstores" not in st.session_state:
-    st.session_state["vectorstores"] = {}
-
-# Only fetch useful file types to speed up repo loading
+# File extensions to track
 extensions = [
-    ".json", ".md", ".html", ".js", ".py", ".css",".cs",".txt",
-    ".ts",".tsx",".jsx", ".java", ".go", ".c", ".cpp", ".rb", ".php", ".sh", ".ipynb"
+    ".json", ".md", ".html", ".js", ".py", ".css", ".cs", ".txt",
+    ".ts", ".tsx", ".jsx", ".java", ".go", ".c", ".cpp", ".rb", ".php", ".sh", ".ipynb"
 ]
 
 # --- Task 1: Q&A Bot ---
@@ -74,6 +69,14 @@ if task == "Q&A Bot":
     if option == "GitHub Repo":
         st.title("🤖 Q&A Bot for GitHub Repo")
         repo_url = st.sidebar.text_input("Enter GitHub Repo URL")
+
+        # reset history if repo_url changed
+        if repo_url and repo_url != st.session_state["last_repo_url"]:
+            st.session_state["qa_github_history"] = []
+            st.session_state["repo_github_text"] = ""
+            st.session_state["branches"] = []
+            st.session_state["selected_branch"] = "main"
+            st.session_state["last_repo_url"] = repo_url
 
         if st.sidebar.button("Get Branches"):
             try:
@@ -150,6 +153,13 @@ if task == "Q&A Bot":
             type=[ext[1:] for ext in extensions],
             accept_multiple_files=True
         )
+
+        # reset history if uploaded files changed
+        if uploaded_files != st.session_state["last_uploaded_files"]:
+            st.session_state["qa_upload_history"] = []
+            st.session_state["repo_upload_text"] = ""
+            st.session_state["last_uploaded_files"] = uploaded_files
+
         if uploaded_files:
             st.session_state["repo_upload_text"] = load_uploaded_files(uploaded_files)
             st.sidebar.success("✅ Files loaded successfully!")
@@ -206,5 +216,3 @@ elif task == "Code Generator":
         
         st.session_state["code_history"][-1]["bot"] = response
         st.rerun()
-
-
