@@ -1,11 +1,11 @@
 import requests
 import streamlit as st
 
-def fetch_github_repo(owner, repo, branch, extensions, GITHUB_TOKEN):
+def fetch_github_repo(owner, repo, branch, extensions, github_token):
     api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
     headers = {
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": f"token {GITHUB_TOKEN}" if GITHUB_TOKEN else None
+        "Authorization": f"token {github_token}" if GITHUB_TOKEN else None
     }
     response = requests.get(api_url, headers=headers)
     if response.status_code != 200:
@@ -31,7 +31,7 @@ def get_github_branches(owner, repo, GITHUB_TOKEN):
     url = f"https://api.github.com/repos/{owner}/{repo}/branches"
     headers = {
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": f"token {GITHUB_TOKEN}" if GITHUB_TOKEN else None
+        "Authorization": f"token {github_token}" if GITHUB_TOKEN else None
     }
     r = requests.get(url, headers=headers)
     try:
@@ -42,6 +42,7 @@ def get_github_branches(owner, repo, GITHUB_TOKEN):
         # Raise original exception with detailed info
         raise Exception(f"Failed to fetch branches: {e}") from e
         #st.error("The link provided is invalid!!!")
+
 
 
 
