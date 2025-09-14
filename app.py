@@ -83,7 +83,7 @@ if task == "Q&A Bot":
                 if repo_url:
                     parts = repo_url.strip("/").split("/")
                     owner, repo = parts[-2], parts[-1]
-                    branches = get_github_branches(owner, repo,GITHUB_TOKEN = github_token)
+                    branches = get_github_branches(owner, repo,github_token)
                     if branches:
                         st.session_state["branches"] = branches
                         st.success("✅ Branches fetched successfully!")
@@ -102,7 +102,7 @@ if task == "Q&A Bot":
                             parts = repo_url.strip("/").split("/")
                             owner, repo = parts[-2], parts[-1]
                             repo_text = fetch_github_repo(
-                                owner, repo, st.session_state["selected_branch"], extensions, GITHUB_TOKEN = github_token
+                                owner, repo, st.session_state["selected_branch"], extensions, github_token
                             )
                             st.session_state["repo_github_text"] = repo_text
                             st.sidebar.success("Repo loaded successfully!", icon="✅")
@@ -205,4 +205,5 @@ elif task == "Code Generator":
         
         st.session_state["code_history"][-1]["bot"] = response
         st.rerun()
+
 
