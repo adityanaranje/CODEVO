@@ -31,4 +31,6 @@ def get_github_branches(owner, repo):
     if r.status_code == 200:
         return [branch["name"] for branch in r.json()]
     else:
-        st.error("The link provided is invalid!!!")
+        raise Exception(f"Failed to fetch branches: {e}") from e
+        #st.error("The link provided is invalid!!!")
+
