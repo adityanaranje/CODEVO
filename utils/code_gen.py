@@ -6,5 +6,6 @@ def generate_code(prompt):
         model_name="meta-llama/llama-4-maverick-17b-128e-instruct",
         temperature=0.2
     )
-    response = llm.predict(prompt)
+    response = llm.invoke(prompt)
     return response
+
