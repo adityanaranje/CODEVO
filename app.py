@@ -124,7 +124,7 @@ if task == "Q&A Bot":
                     with st.chat_message("user"):
                         st.markdown(chat["user"])
                     with st.chat_message("assistant"):
-                        st.code(chat["bot"], language="python")
+                        st.markdown(chat["bot"], language="python")
 
             query = st.chat_input("Ask a question about the GitHub repo...")
             if query:
@@ -163,7 +163,7 @@ if task == "Q&A Bot":
                     with st.chat_message("user"):
                         st.markdown(chat["user"])
                     with st.chat_message("assistant"):
-                        st.code(chat["bot"], language="python")
+                        st.markdown(chat["bot"], language="python")
 
             query = st.chat_input("Ask a question about uploaded files...")
             if query:
@@ -206,3 +206,4 @@ elif task == "Code Generator":
         
         st.session_state["code_history"][-1]["bot"] = response
         st.rerun()
+
