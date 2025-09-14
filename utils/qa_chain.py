@@ -4,7 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -50,3 +50,4 @@ def build_qa_chain(repo_text, repo_name):
     )
 
     return qa_chain
+
