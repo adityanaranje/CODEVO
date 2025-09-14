@@ -2,11 +2,9 @@ streamlit
 langchain
 langchain-community
 langchain-groq
-langchain-astradb
-streamlit
 huggingface-hub
-cassio
-cassandra-driver
 sentence-transformers
 langchain_huggingface
+python-dotenv
+langchain-core
 faiss-cpu
