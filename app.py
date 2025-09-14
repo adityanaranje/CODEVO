@@ -4,10 +4,36 @@ from utils.github_loader import fetch_github_repo, get_github_branches
 from utils.file_loader import load_uploaded_files
 from utils.qa_chain import build_qa_chain
 from utils.code_gen import generate_code
+import requests
 
 # --- Streamlit App ---
 st.set_page_config(page_title="Codevo", layout="wide", page_icon="pageicon.svg")
 st.sidebar.image("sidebar.png")
+
+# --- GitHub Token Input ---
+st.sidebar.title("🔑 GitHub Access Token")
+github_token = st.sidebar.text_input(
+    "Enter your GitHub Personal Access Token (required for large repos)",
+    type="password"
+)
+
+# Store token in session_state for reuse
+if github_token:
+    st.session_state["GITHUB_TOKEN"] = github_token
+else:
+    st.warning("GitHub token required to fetch branches and repo.")
+    st.stop()  # Stop further execution until token is provided
+
+# --- Function to validate token ---
+def validate_github_token(token):
+    url = "https://api.github.com/user"
+    headers = {"Authorization": f"token {token}"}
+    r = requests.get(url, headers=headers)
+    return r.status_code == 200
+
+if not validate_github_token(st.session_state["GITHUB_TOKEN"]):
+    st.error("Invalid GitHub token! Please provide a correct token.")
+    st.stop()  # Stop further execution
 
 # --- Sidebar task selection ---
 st.sidebar.title("🔍 Choose Task")
@@ -38,7 +64,6 @@ if "vectorstores" not in st.session_state:
 extensions = [
     ".json", ".md", ".html", ".js", ".py", ".css",".cs",".txt",
     ".ts",".tsx",".jsx", ".java", ".go", ".c", ".cpp", ".rb", ".php", ".sh", ".ipynb"
-
 ]
 
 # --- Task 1: Q&A Bot ---
@@ -50,12 +75,15 @@ if task == "Q&A Bot":
         st.title("🤖 Q&A Bot for GitHub Repo")
         repo_url = st.sidebar.text_input("Enter GitHub Repo URL")
 
+        # Use token in headers for all GitHub requests
+        headers = {"Authorization": f"token {st.session_state['GITHUB_TOKEN']}"}
+
         if st.sidebar.button("Get Branches"):
             try:
                 if repo_url:
                     parts = repo_url.strip("/").split("/")
                     owner, repo = parts[-2], parts[-1]
-                    branches = get_github_branches(owner, repo)
+                    branches = get_github_branches(owner, repo, headers=headers)
                     if branches:
                         st.session_state["branches"] = branches
                         st.success("✅ Branches fetched successfully!")
@@ -74,7 +102,7 @@ if task == "Q&A Bot":
                             parts = repo_url.strip("/").split("/")
                             owner, repo = parts[-2], parts[-1]
                             repo_text = fetch_github_repo(
-                                owner, repo, st.session_state["selected_branch"], extensions
+                                owner, repo, st.session_state["selected_branch"], extensions, headers=headers
                             )
                             st.session_state["repo_github_text"] = repo_text
                             st.sidebar.success("Repo loaded successfully!", icon="✅")
@@ -101,7 +129,6 @@ if task == "Q&A Bot":
             if query:
                 st.session_state["qa_github_history"].append({"user": query, "bot": "..."})
                 with st.spinner("🤖 Thinking..."):
-                    # Only last 3 Q&A for context
                     context_window = 3
                     context = ""
                     for chat in st.session_state["qa_github_history"][-context_window:-1]:
