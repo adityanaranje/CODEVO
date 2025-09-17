@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from dotenv import load_dotenv
+import streamlit as st
 import os
 load_dotenv()
 
