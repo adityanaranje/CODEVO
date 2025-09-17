@@ -5,8 +5,8 @@ load_dotenv()
 
 @dataclass
 class Config:
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY")  # Replace with your actual Groq API key
-    GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN")  # Replace with your actual GitHub token
+    GROQ_API_KEY: str = st.secrets["GROQ_API_KEY"]  # Replace with your actual Groq API key
+    GITHUB_TOKEN: str = st.secrets["GITHUB_TOKEN"]  # Replace with your actual GitHub token
     MAX_FILE_SIZE: int = 1000000  # 1MB
     CHUNK_SIZE: int = 1000
     CHUNK_OVERLAP: int = 200
