@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+      - name: Push code to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: git push --force https://DeltaVenom:$HF_TOKEN@huggingface.co/spaces/DeltaVenom/CodEvo main
