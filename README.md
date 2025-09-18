@@ -1,3 +1,16 @@
+---
+title: Cod Evo
+emoji: 🚀
+colorFrom: red
+colorTo: red
+sdk: docker
+app_port: 8501
+tags:
+- streamlit
+pinned: false
+short_description: Streamlit template space
+---
+
 # Advanced GitHub Repository RAG Q&A Bot
 
 A sophisticated Retrieval-Augmented Generation (RAG) system that analyzes GitHub repositories, generate code and answers questions using Groq LLM, FAISS vector store, and HuggingFace embeddings.
