@@ -1,5 +1,6 @@
 # 🚀 Advanced GitHub Repository RAG Q&A & Code Generation Bot
 
+
 A sophisticated **Retrieval-Augmented Generation (RAG)** system that analyzes GitHub repositories, generates code, and answers questions using **Groq LLM**, **FAISS vector store**, and **HuggingFace embeddings**.
 
 ---
