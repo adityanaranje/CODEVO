@@ -198,5 +198,6 @@ The app will open in your browser at `http://localhost:8501`
 
 ---
 
+
 ✅ Now, you can **explore repositories, ask questions, and even generate code** all in one place!
 
